@@ -1,3 +1,17 @@
+// Variables //
+
+var width = 1280;
+var height = 0;
+
+var streaming = false;
+
+var video = null;
+var canvas = null;
+var photo = null;
+var streamObj = null;
+
+const updateInt = 1000
+
 // Pick Strongest Emotion //
 
 const pickHighest = (obj, num = 1) => {
@@ -87,7 +101,7 @@ async function faceDect(){
     canvas.getContext("2d").clearRect(0,0,canvas.width,canvas.height);
     faceapi.draw.drawDetections(canvas, resizedDescriptions)
     faceapi.draw.drawFaceLandmarks(canvas, resizedDescriptions)
-  }, 1000)
+  }, updateInt)
 
   console.log("Completed")
 }
@@ -95,20 +109,12 @@ async function faceDect(){
 
 // Camera Startup Function //
 
-var width = 1280;
-var height = 0;
 
-var streaming = false;
-
-var video = null;
-var canvas = null;
-var photo = null;
-var streamObj = null;
 
 function startup() {
     video = document.getElementById('videoTest');
     canvas = document.getElementById('canvasTest');
-    photo = document.getElementById('photoTest');
+    outputHolder = document.getElementById('outputHolder');
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(function(stream) {
@@ -127,6 +133,10 @@ function startup() {
             video.setAttribute('height', height);
             canvas.setAttribute('width', width);
             canvas.setAttribute('height', height);
+            // outputHolder.setAttribute('width', width);
+            // outputHolder.setAttribute('height', height);
+            outputHolder.style.width = width;
+            outputHolder.style.height = height;
             streaming = true;
         }
     }, false);

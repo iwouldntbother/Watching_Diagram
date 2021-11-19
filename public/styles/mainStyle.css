@@ -24,8 +24,16 @@ body {
 }
 
 #debugContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   width: 100vw;
-  /* height: 95vh; */
+  height: 95vh;
+  /* position: relative; */
+}
+
+#outputHolder {
   position: relative;
 }
 

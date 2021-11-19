@@ -46,5 +46,5 @@ for (var i=0; i<resizedDescriptions.length; i++) {
 - [x] Implement face-api.js (Pre-trained model for face detection)
 - [x] Implement expression detection
 - [x] Convert array to explicit data
-- [ ] Add logging function to git repo
+- [ ] Reintroduce logging
 - [ ] Build REST-API
