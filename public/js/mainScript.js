@@ -61,9 +61,12 @@ async function faceDect(){
     surprised: 0,
     youngest: 1000,
     oldest: 0,
+    ageArray: [],
     male: 0,
     female: 0,
   }
+
+  // var agesArray = [0,0,0];
 
   setInterval(async () => {
     let fullFaceDescriptions = await faceapi.detectAllFaces(input).withFaceLandmarks().withFaceExpressions().withAgeAndGender()
@@ -71,17 +74,21 @@ async function faceDect(){
 
     // console.log(logDesc ? resizedDescriptions : 'Description logging disabled')
 
-    Object.keys(peopleStats).forEach((key) => { peopleStats[key] = 0 });
+    Object.keys(peopleStats).forEach((key) => { (key == 'ageArray' || key == 'youngest') ? null : peopleStats[key] = 0 });
     let totalConfidence = 0;
+
+    peopleStats.ageArray = [];
 
     for (var i=0; i<resizedDescriptions.length; i++) {
       peopleStats.people++;
-      (resizedDescriptions[i].age > peopleStats.oldest) ? peopleStats.oldest = resizedDescriptions[i].age : null;
-      (resizedDescriptions[i].age < peopleStats.youngest) ? peopleStats.youngest = resizedDescriptions[i].age : null;
+      (resizedDescriptions[i].age > peopleStats.oldest) ? peopleStats.oldest = resizedDescriptions[i].age : 0;
+      (resizedDescriptions[i].age <= peopleStats.youngest) ? peopleStats.youngest = resizedDescriptions[i].age : 0;
       (resizedDescriptions[i].gender === 'male') ? peopleStats.male++ : peopleStats.female++
       totalConfidence += resizedDescriptions[i].detection._score;
       peopleStats[pickHighest(resizedDescriptions[i].expressions)]++
     }
+
+
     document.getElementById("peopleOutput").innerHTML = (peopleStats.people === 1) ? '1 person.' : peopleStats.people+' people.'
     document.getElementById("confidenceOutput").innerHTML = ((Math.floor((totalConfidence / resizedDescriptions.length) * 100) / 100) || 0) + ' confidence.'
 
@@ -109,8 +116,6 @@ async function faceDect(){
 
 // Camera Startup Function //
 
-
-
 function startup() {
     video = document.getElementById('videoTest');
     canvas = document.getElementById('canvasTest');
@@ -133,17 +138,11 @@ function startup() {
             video.setAttribute('height', height);
             canvas.setAttribute('width', width);
             canvas.setAttribute('height', height);
-            // outputHolder.setAttribute('width', width);
-            // outputHolder.setAttribute('height', height);
-            outputHolder.style.width = width;
-            outputHolder.style.height = height;
             streaming = true;
         }
     }, false);
 
-}
-
-    
+}  
 
 function endStream() {
   streamObj.getTracks().forEach(function(track) {
