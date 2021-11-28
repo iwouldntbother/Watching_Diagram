@@ -21,10 +21,14 @@
   <p id="output"></p>
   </div>  
 
+  <div id="outputHolder">
+    <video id="videoTest"></video>
+    <canvas id="canvasTest"></canvas>
+  </div>
   <div id="debugContainer">
-    <div id="outputHolder">
-      <video id="videoTest"></video>
-      <canvas id="canvasTest"></canvas>
+
+    <div id="facesOutput">
+      
     </div>
     
     <div id="debugOutput">
@@ -40,11 +44,16 @@
       <p><span id="ageOutput">0-0 age range.</span></p>
       <p><span id="maleOutput">0 men.</span></p>
       <p><span id="femaleOutput">0 women.</span></p>
+      <p><span id="maskOutput">0 people wearing a face mask.</span></p>
+      <p><span id="noMaskOutput">0 people not wearing a face mask.</span></p>
     </div>
   
+    <img id="outputCropped" style='max-width: 20vw;height: auto;'>
+
   </div>
     
   <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/ml5.min.js"></script>
   <script src="js/face-api.js"></script>
   <script defer src="js/mainScript.js"></script>
   <script src="http://livejs.com/live.js"></script>

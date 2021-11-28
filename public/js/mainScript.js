@@ -10,7 +10,7 @@ var canvas = null;
 var photo = null;
 var streamObj = null;
 
-const updateInt = 1000
+const updateInt = 100
 
 // Pick Strongest Emotion //
 
@@ -27,11 +27,63 @@ const pickHighest = (obj, num = 1) => {
   return requiredOBJ;
 }
 
+// Mask Detection API //
+
+let start = false;
+let faceApi;
+let classifier;
+
+const detectionOptions = {
+  withLandmarks: true,
+  withDescriptors: false,
+  minConfidence: 0.5,
+  MODEL_URLS: {
+    Mobilenetv1Model: '../models/ssd_mobilenetv1_model-weights_manifest.json',
+    FaceLandmarkModel: '../models/face_landmark_68_model-weights_manifest.json',
+    FaceLandmark68TinyNet: '../models/face_landmark_68_tiny_model-weights_manifest.json',
+    FaceRecognitionModel: '../models/face_recognition_model-weights_manifest.json',
+  }
+};
+
+const preload = () => {
+  faceApi = ml5.faceApi(detectionOptions, modelLoaded);
+  classifier = ml5.imageClassifier('../models/faceMask/model.json', classifierLoaded);
+}
+
+const modelLoaded = () => {
+  console.log('Mask Model Loaded');
+}
+
+const classifierLoaded = () => {
+  console.log('Mask classifier loaded!')
+}
+
+const classifyVideo = (input) => {
+  return classifier.classify(input || video, gotResults);
+}
+
+const gotResults = (error, results) => {
+  // console.log(results[0].label);
+  if (error) {console.error(error); return;}
+  else if (results) {
+    return results[0].label;
+    // let label = results[0].label
+    // if (label === "yes_mask") {console.log('Mask')}
+    // else if (label === "no_mask") {console.log('No Mask')}
+    // else { color = "#FFFFFF"}
+  }
+  return;
+}
+
 // Face Detection API //
 
 async function faceDect(){
 
-  console.log("Started");
+  console.log("Mask API Starting")
+
+  preload();
+
+  console.log("Started main");
 
   const MODEL_URL = 'models'
 
@@ -41,7 +93,7 @@ async function faceDect(){
   await faceapi.loadFaceExpressionModel(MODEL_URL)
   await faceapi.loadAgeGenderModel(MODEL_URL)
 
-  console.log("Models loaded")
+  console.log("Main models loaded")
 
   const input = document.getElementById('videoTest')
   const canvas = document.getElementById('canvasTest')
@@ -64,6 +116,8 @@ async function faceDect(){
     ageArray: [],
     male: 0,
     female: 0,
+    masks: 0,
+    noMasks: 0,
   }
 
   // var agesArray = [0,0,0];
@@ -72,14 +126,28 @@ async function faceDect(){
     let fullFaceDescriptions = await faceapi.detectAllFaces(input).withFaceLandmarks().withFaceExpressions().withAgeAndGender()
     resizedDescriptions = faceapi.resizeResults(fullFaceDescriptions, imageSize)
 
+    
+    // classifyVideo();
+    
     // console.log(logDesc ? resizedDescriptions : 'Description logging disabled')
-
+    
     Object.keys(peopleStats).forEach((key) => { (key == 'ageArray' || key == 'youngest') ? null : peopleStats[key] = 0 });
     let totalConfidence = 0;
-
+    
     peopleStats.ageArray = [];
+    maskArray = [];
+    
+    // document.getElementById('facesOutput').children.length = 0;
+
+    var child = document.getElementById('facesOutput').lastElementChild; 
+    while (child) {
+      document.getElementById('facesOutput').removeChild(child);
+        child = document.getElementById('facesOutput').lastElementChild;
+    }
 
     for (var i=0; i<resizedDescriptions.length; i++) {
+      // extractFaceFromBox(input, resizedDescriptions[i].detection.box);
+      maskArray.push( await classifyVideo(await extractFaceFromBox(input, resizedDescriptions[i].detection.box)) );
       peopleStats.people++;
       (resizedDescriptions[i].age > peopleStats.oldest) ? peopleStats.oldest = resizedDescriptions[i].age : 0;
       (resizedDescriptions[i].age <= peopleStats.youngest) ? peopleStats.youngest = resizedDescriptions[i].age : 0;
@@ -103,7 +171,26 @@ async function faceDect(){
     document.getElementById("ageOutput").innerHTML = Math.round(peopleStats.youngest) +'-'+ Math.round(peopleStats.oldest) + ' age range.'
 
     document.getElementById("maleOutput").innerHTML = (peopleStats.male === 1) ? '1 man.' : peopleStats.male+' men.'
-    document.getElementById("femaleOutput").innerHTML = (peopleStats.surprised === 1) ? '1 woman.' : peopleStats.female+' women.'
+    document.getElementById("femaleOutput").innerHTML = (peopleStats.female === 1) ? '1 woman.' : peopleStats.female+' women.'
+    // console.log(maskArray)
+
+    maskArray.forEach((item, index) => {
+      switch (item[0].label) {
+        case 'mask':
+          peopleStats.masks++
+          break;
+      
+        case 'noMask':
+          peopleStats.noMasks++
+          break;
+
+        default:
+          break;
+      }
+    })
+
+    document.getElementById("maskOutput").innerHTML = (peopleStats.masks === 1) ? '1 person wearing a face mask.' : peopleStats.masks + ' people wearing a face mask.';
+    document.getElementById("noMaskOutput").innerHTML = (peopleStats.noMasks === 1) ? '1 person not wearing a face mask.' : peopleStats.masks + ' people not wearing a face mask.';
 
     canvas.getContext("2d").clearRect(0,0,canvas.width,canvas.height);
     faceapi.draw.drawDetections(canvas, resizedDescriptions)
@@ -113,6 +200,31 @@ async function faceDect(){
   console.log("Completed")
 }
 
+async function extractFaceFromBox(imageRef, box) {
+  let imageEl = null;
+  const regionsToExtract = [
+    new faceapi.Rect(box.x, box.y*0.5, box.width*2, box.height*2)
+  ];
+  let faceImages = await faceapi.extractFaces(imageRef, regionsToExtract);
+
+  if (faceImages.length === 0) {
+    // console.log("No face found");
+  } else {
+    let outputImage = "";
+    faceImages.forEach((cnv) => {
+      outputImage = cnv.toDataURL();
+      // setPic(cnv.toDataURL());
+    });
+    // setPic(faceImages.toDataUrl);
+    // console.log("face found ");
+    // console.log(outputImage);
+    imageEl = document.createElement('img')
+    imageEl.src = outputImage;
+    document.getElementById('facesOutput').appendChild(imageEl);
+    // document.getElementById('outputCropped').src = outputImage;
+  }
+  return imageEl;
+}
 
 // Camera Startup Function //
 
@@ -177,3 +289,5 @@ document.getElementById("btn4").onclick = function(){
 //   startup();
 //   setTimeout(() => {faceDect();},500)
 // })
+
+

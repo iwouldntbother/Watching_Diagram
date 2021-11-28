@@ -17,6 +17,7 @@ body {
   align-items: center;
   bottom: 0;
   background: gray;
+  /* display: none; */
 }
 
 #output::before {
@@ -29,14 +30,17 @@ body {
   justify-content: center;
   align-items: center;
   width: 100vw;
-  height: 95vh;
+  height: 100vh;
   /* position: relative; */
+  background: white;
+  z-index: 99;
 }
 
 #outputHolder {
-  position: relative;
+  position: absolute;
   width: 40vw;
   height: 30vw;
+  opacity: 0;
 }
 
 #videoTest, #canvasTest {
@@ -51,4 +55,53 @@ body {
 
 #debugOutput {
   margin-left: 2vw;
+}
+
+#facesOutput {
+  width: 40vw;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: left;
+  align-items: flex-start;
+  /* display: none; */
+}
+
+#facesOutput img {
+  max-width: 10vw;
+  height: auto;
+}
+
+
+  /*        */
+ /* Pretty */
+/*        */
+
+#textOutput {
+  width: calc(100vh / 1.4142135623730950488016887242097);
+  height: 100vh;
+  white-space: pre;
+  background: #333;
+  color: white;
+  padding-left: 1vw;
+  padding-top: 1vw;
+  font-size: 1vw;
+}
+
+@keyframes blinkingCursor {
+  0% {
+    content: '█';
+  }
+  50% {
+    content: ' ';
+  }
+  100% {
+    content: '█';
+  }
+}
+
+#textOutput::after {
+  animation: blinkingCursor 1s linear infinite;
+  content: '█';
 }

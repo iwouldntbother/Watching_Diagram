@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Main</title>
+
+<link rel="stylesheet" href="styles/mainStyle.css">
+<style>
+
+</style>
+
+</head>
+<body id="body">
+  
+  <div id="buttonBar">
+  <button id="btn0">Start Stream</button>
+  <button id="btn1">Start API</button>
+  <button id="btn2">End Stream</button>
+  <button id="btn3">Reload</button>
+  <button id="btn4">Load All</button>
+  <p id="output"></p>
+  </div>  
+
+  <div id="textOutput"></div>
+
+   <div id="debugContainer" style='display: none;'>
+    <div id="outputHolder">
+      <video id="videoTest"></video>
+      <canvas id="canvasTest"></canvas>
+    </div>
+    
+  <!--  <div id="debugOutput">
+      <p><span id="peopleOutput">0 people.</span></p>
+      <p><span id="confidenceOutput">0 confidence.</span></p>
+      <p><span id="happyOutput">0 happy people.</span></p>
+      <p><span id="neutralOutput">0 neutral people.</span></p>
+      <p><span id="sadOutput">0 sad people.</span></p>
+      <p><span id="angryOutput">0 angry people.</span></p>
+      <p><span id="disgustedOutput">0 disgusted people.</span></p>
+      <p><span id="fearfulOutput">0 fearful people.</span></p>
+      <p><span id="surprisedOutput">0 surprised people.</span></p>
+      <p><span id="ageOutput">0-0 age range.</span></p>
+      <p><span id="maleOutput">0 men.</span></p>
+      <p><span id="femaleOutput">0 women.</span></p>
+    </div> -->
+  
+  </div>
+    
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/face-api.js"></script>
+  <script src="js/script.js"></script>
+  <script defer src="js/pretty.js"></script>
+  <script src="http://livejs.com/live.js"></script>
+</body>
+</html>
