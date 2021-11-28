@@ -291,3 +291,10 @@ document.getElementById("btn4").onclick = function(){
 // })
 
 
+const runOnStart = true;
+
+if (runOnStart) {
+  document.getElementById('buttonBar').style.display = 'none';
+  startup();
+  setTimeout(() => {faceDect();},500)
+}

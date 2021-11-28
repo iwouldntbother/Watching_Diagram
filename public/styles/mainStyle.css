@@ -31,7 +31,6 @@ body {
   align-items: center;
   width: 100vw;
   height: 100vh;
-  /* position: relative; */
   background: white;
   z-index: 99;
 }
@@ -46,11 +45,7 @@ body {
 #videoTest, #canvasTest {
   width: 40vw;
   height: auto;
-  /* background: cornflowerblue; */
-  /* opacity: 0.7; */
   position: absolute;
-  /* top: 0;
-  left: 0; */
 }
 
 #debugOutput {
