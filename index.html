@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watching</title>
+  <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+
+  <div id='siteContainer'>
+
+    <div id="informationContainer">
+      <h1>Digital observation</h1>
+      <p>This is a simple demo of an AI trained to detect faces and emotions.<br><br>
+      The small number at the top is the AI's confidence as to its guess,<br><br>
+      same with the numbers next to the expressions.</p>
+    </div>
+  
+    <div id="videoContainer">
+      <video id="videoTest"></video>
+      <canvas id="canvasTest"></canvas>
+    </div>
+  
+  </div>
+
+  
+
+  <script src="/js/jquery-3.4.1.min.js"></script>
+  <script src='/js/face-api.js'></script>
+  <script src='/js/script.js'></script>
+
+</body>
+</html>
